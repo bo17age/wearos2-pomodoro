@@ -75,7 +75,7 @@ public class BasePomodoroActivity extends Activity implements WatchViewStub.OnLa
     @DebugLog
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         unbinder.unbind();
+        super.onDestroy();
     }
 }

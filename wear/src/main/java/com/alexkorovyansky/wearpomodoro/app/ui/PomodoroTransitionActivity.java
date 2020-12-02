@@ -37,7 +37,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
     private UITimer uiTimer;
     private SensorManager sensorManager;
     private Vibrator vibrator;
-
+    private byte[] gif;
     private GifImageView awesomeGif;
 
     private ActivityType nextActivityType;
@@ -53,6 +53,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         this.vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         this.nextActivityType = ActivityType.fromValue(getIntent().getIntExtra(EXTRA_NEXT_ACTIVITY_TYPE, -1));
+        gif = PomodoroUtils.readRawResourceBytes(getResources(), R.raw.pomodoro);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
         vibrator.vibrate(200);
 
         awesomeGif = (GifImageView) stub.findViewById(R.id.transition_awesome_gif);
-        awesomeGif.setBytes(PomodoroUtils.readRawResourceBytes(getResources(), R.raw.pomodoro));
+        awesomeGif.setBytes(gif);
         awesomeGif.startAnimation();
 
         if (nextActivityType.isBreak()) {
@@ -91,6 +92,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
             messageText.setText(String.format(
                     getString(R.string.transition_text_before_pomodoro_message_template),
                     eatenPomodoros + 1));
+
             uiTimer.schedule(new UITimer.Task() {
                 @Override
                 public void run() {
