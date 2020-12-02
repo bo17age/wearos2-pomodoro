@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '28.0.3'
+
+    defaultConfig {
+        applicationId "com.alexkorovyansky.wearpomodoro"
+        minSdkVersion 28
+        targetSdkVersion 28
+        versionCode calculateVersionCode()
+        versionName calculateVersionName()
+        buildConfigField 'String', 'GIT_SHA', '"' + "${gitSha()}" + '"'
+        buildConfigField 'String', 'BUILD_TIME', '"' + "${buildTime()}'" + '"'
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('../distribution/debug.keystore')
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    wearApp project(':wear')
+    //compile 'com.android.support:support-v4:22.0.0'
+    implementation 'com.google.android.gms:play-services-wearable:17.0.0'
+    implementation 'com.felipecsl:gifimageview:1.1.0'
+}
