@@ -11,7 +11,6 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.wearable.view.WatchViewStub;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
@@ -47,24 +46,25 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentViews(R.layout.activity_transite_rect, R.layout.activity_transite_round);
+
         this.pomodoroMaster = ServiceProvider.getInstance().getPomodoroMaster(this);
         this.uiTimer = ServiceProvider.getInstance().getUITimer();
         this.sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         this.vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        this.nextActivityType = ActivityType.fromValue(getIntent().getIntExtra(EXTRA_NEXT_ACTIVITY_TYPE, -1));
         gif = PomodoroUtils.readRawResourceBytes(getResources(), R.raw.pomodoro);
+        awesomeGif = findViewById(R.id.transition_awesome_gif);
+        awesomeGif.setBytes(gif);
     }
 
     @Override
-    public void onLayoutInflated(WatchViewStub stub) {
-        super.onLayoutInflated(stub);
+    public void onResume() {
+        super.onResume();
+
+        this.nextActivityType = ActivityType.fromValue(getIntent().getIntExtra(EXTRA_NEXT_ACTIVITY_TYPE, -1));
         PomodoroAlarmReceiver.completeWakefulIntent(getIntent());
         pomodoroMaster.cancelNotification();
         vibrator.vibrate(200);
 
-        awesomeGif = (GifImageView) stub.findViewById(R.id.transition_awesome_gif);
-        awesomeGif.setBytes(gif);
         awesomeGif.startAnimation();
 
         if (nextActivityType.isBreak()) {
@@ -77,7 +77,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
             anim.start();
         }
 
-        final TextView messageText = (TextView) stub.findViewById(R.id.transition_text);
+        final TextView messageText = findViewById(R.id.transition_text);
         final int eatenPomodoros = pomodoroMaster.getEatenPomodoros();
 
         if (nextActivityType.isBreak()) {
@@ -102,6 +102,7 @@ public class PomodoroTransitionActivity extends BasePomodoroActivity implements 
                 }
             }, 3000, "PomodoroTransitionActivity.DelayTimer");
         }
+
     }
 
     @DebugLog
